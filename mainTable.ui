@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainTable</class>
+ <widget class="QMainWindow" name="MainTable">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1211</width>
+    <height>784</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1211</width>
+    <height>784</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1211</width>
+    <height>784</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>База данных для военкомата</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QTableWidget" name="mainTableWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1211</width>
+      <height>731</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+      <horstretch>1</horstretch>
+      <verstretch>1</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>1211</width>
+      <height>731</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>1211</width>
+      <height>731</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lfmc_id">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>740</y>
+      <width>291</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Выделен военнообязанный с идентификатором: —</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1211</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>База данных</string>
+    </property>
+    <addaction name="load_base"/>
+    <addaction name="update_base"/>
+   </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="title">
+     <string>Справка</string>
+    </property>
+    <addaction name="help"/>
+    <addaction name="about_program"/>
+   </widget>
+   <widget class="QMenu" name="menu_3">
+    <property name="title">
+     <string>Администрирование</string>
+    </property>
+    <addaction name="add_mil"/>
+    <addaction name="change_mil"/>
+    <addaction name="view_report"/>
+   </widget>
+   <addaction name="menu"/>
+   <addaction name="menu_3"/>
+   <addaction name="menu_2"/>
+  </widget>
+  <action name="load_base">
+   <property name="text">
+    <string>Загрузить</string>
+   </property>
+  </action>
+  <action name="update_base">
+   <property name="text">
+    <string>Обновить</string>
+   </property>
+  </action>
+  <action name="help">
+   <property name="text">
+    <string>Помощь</string>
+   </property>
+  </action>
+  <action name="about_program">
+   <property name="text">
+    <string>О программе</string>
+   </property>
+  </action>
+  <action name="add_mil">
+   <property name="text">
+    <string>Добавить военнообязанного</string>
+   </property>
+  </action>
+  <action name="delete_mil">
+   <property name="text">
+    <string>Удалить военнообязанного</string>
+   </property>
+  </action>
+  <action name="change_mil">
+   <property name="text">
+    <string>Изменить данные военнообязанного</string>
+   </property>
+  </action>
+  <action name="view_report">
+   <property name="text">
+    <string>Просмотреть личное дело</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
