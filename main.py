@@ -117,7 +117,7 @@ class PersonalFile(QMainWindow):
 class AddChangeFLMC(QMainWindow):
     def __init__(self, incoming_id):
         super(AddChangeFLMC, self).__init__()
-        self.incoming_id = incoming_id
+        self.id = incoming_id
         uic.loadUi('addChangeFlmc.ui', self)
 
         self.lfmc_surname = self.findChild(QLineEdit, 'flmc_surname')
@@ -135,8 +135,8 @@ class AddChangeFLMC(QMainWindow):
 
         self.rb_add.setDisabled(True)
         self.rb_change.setDisabled(True)
-
-        if self.incoming_id == '—':
+        self.flmc_id.setText('ID: ' + self.id)
+        if self.id == '—':
             self.button_add_change.clicked.connect(self.add_flmc)
             self.button_add_change.setText('Добавление военнообязанного')
             self.rb_add.setChecked(True)
@@ -145,7 +145,14 @@ class AddChangeFLMC(QMainWindow):
             self.button_add_change.setText('Изменить')
             self.setWindowTitle('Изменение данных военнообязанного')
             self.rb_change.setChecked(True)
-        self.flmc_id.setText('ID: ' + self.incoming_id)
+            flmc_row = self.get_row('lfmc.xlsx')
+            self.lfmc_surname.setText(flmc_row[1])
+            self.lfmc_name.setText(flmc_row[2])
+            self.lfmc_patronymic.setText(flmc_row[3])
+            self.lfmc_birthday_date.setText(flmc_row[4])
+            self.lfmc_health_category.setText(flmc_row[5])
+            self.lfmc_military_speciality.setText(flmc_row[6])
+            self.lfmc_combat_experience.setText(flmc_row[7])
 
     def add_flmc(self):
         lfmc_table = pd.read_excel('bases/lfmc.xlsx')
@@ -186,16 +193,24 @@ class AddChangeFLMC(QMainWindow):
     def change_flmc(self):
         pass
 
+    def get_row(self, file_name):
+        data_frame = pd.read_excel('bases/' + file_name)
+        data_row = ''
+        for row in range(0, data_frame.shape[0]):
+            if str(data_frame.iloc[row][0]) == str(self.id):
+                data_row = data_frame.iloc[row]
+        return data_row
+
     def show_error(self, message):
         QMessageBox().critical(self, 'Ошибка', message, QMessageBox.Ok)
 
     def show_message(self, message):
-        mesage_box = QMessageBox()
-        mesage_box.setIcon(QMessageBox.Information)
-        mesage_box.setText(message)
-        mesage_box.setWindowTitle('Уведомление')
-        mesage_box.setStandardButtons(QMessageBox.Ok)
-        mesage_box.exec()
+        message_box = QMessageBox()
+        message_box.setIcon(QMessageBox.Information)
+        message_box.setText(message)
+        message_box.setWindowTitle('Уведомление')
+        message_box.setStandardButtons(QMessageBox.Ok)
+        message_box.exec()
 
 
 class AboutProgram(QMainWindow):
@@ -224,6 +239,7 @@ class MainTable(QMainWindow):
         self.action_add_change_flmc = self.findChild(QAction, 'add_change_flmc')
         self.lfmc_id = self.findChild(QLabel, 'lfmc_id')
         self.reset_selection = self.findChild(QPushButton, 'reset_selection')
+        self.prompt = self.findChild(QLabel, 'prompt')
 
         self.action_help.triggered.connect(self.act_help)
         self.action_about_program.triggered.connect(self.act_about_program)
@@ -234,6 +250,7 @@ class MainTable(QMainWindow):
         self.mainTableWidget.itemSelectionChanged.connect(self.cell_clicked)
         self.reset_selection.clicked.connect(self.reset)
 
+        self.prompt.hide()
         self.selected_id = '—'
         self.aboutProgram = AboutProgram()
         self.help = Help()
@@ -248,6 +265,7 @@ class MainTable(QMainWindow):
     def act_add_flmc(self):
         if self.is_loaded:
             self.add_change = AddChangeFLMC(self.selected_id)
+            self.prompt.show()
             self.add_change.show()
         else:
             self.show_error('База данных не загружена')
@@ -284,6 +302,7 @@ class MainTable(QMainWindow):
 
     def act_update(self):
         if self.is_loaded:
+            self.prompt.hide()
             lfmc_table = pd.read_excel('bases/lfmc.xlsx', usecols=['Lfmc_id', 'Surname', 'Name', 'Patronymic',
                                                                    'Birthday_date', 'Health_category',
                                                                    'Military_speciality', 'Combat_experience'])
