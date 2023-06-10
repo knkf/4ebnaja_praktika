@@ -1,3 +1,4 @@
+import openpyxl
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QLineEdit, QMessageBox, QMenuBar, QMenu, QAction, \
     QTableWidget, QHeaderView, QTableWidgetItem, QLabel
@@ -136,6 +137,7 @@ class MainTable(QMainWindow):
         self.action_load = self.findChild(QAction, 'load_base')
         self.action_update = self.findChild(QAction, 'update_base')
         self.action_report = self.findChild(QAction, 'view_report')
+        self.action_add_flmc = self.findChild(QAction, 'add_flmc')
         self.lfmc_id = self.findChild(QLabel, 'lfmc_id')
 
         self.action_help.triggered.connect(self.act_help)
@@ -143,6 +145,7 @@ class MainTable(QMainWindow):
         self.action_load.triggered.connect(self.act_load)
         self.action_update.triggered.connect(self.act_update)
         self.action_report.triggered.connect(self.act_report)
+        self.action_add_flmc.triggered.connect(self.act_add_flmc)
         self.mainTableWidget.itemSelectionChanged.connect(self.cell_clicked)
 
         self.selected_id = '-'
@@ -150,6 +153,14 @@ class MainTable(QMainWindow):
         self.help = Help()
         self.report = PersonalFile(self.selected_id)
         self.is_loaded = False
+
+    def act_add_flmc(self):
+        lfmc_table = pd.read_excel('bases/lfmc.xlsx')
+        lfmc_dict = {'Lfmc_id': 'default', 'Surname': 'default', 'Name': 'default', 'Patronymic': 'default',
+                           'Birthday_date': 'default', 'Health_category': 'default', 'Military_speciality': 'default',
+                           'Combat_experience': 'default'}
+        lfmc_table = pd.concat([lfmc_table, pd.DataFrame([lfmc_dict])], ignore_index=True)
+        lfmc_table.to_excel('bases/lfmc.xlsx', index=False)
 
     def act_report(self):
         if self.mainTableWidget.rowCount() != 0:
@@ -167,20 +178,25 @@ class MainTable(QMainWindow):
         self.aboutProgram.show()
 
     def act_load(self):
-        lfmc_table = pd.read_excel('bases/lfmc.xlsx')
-        self.mainTableWidget.setColumnCount(len(lfmc_table.columns))
-        self.mainTableWidget.setRowCount(lfmc_table.shape[0])
-        column_header = ("Идентификатор", "Фамилия", "Имя", "Отчество", "Дата рождения", "Категория годности",
-                         "Военная специальность", "Боевой опыт")
-        self.mainTableWidget.setHorizontalHeaderLabels(column_header)
-        self.mainTableWidget.verticalHeader().setVisible(False)
-        self.mainTableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.is_loaded = True
-        self.act_update()
+        if not self.is_loaded:
+            lfmc_table = pd.read_excel('bases/lfmc.xlsx')
+            self.mainTableWidget.setColumnCount(len(lfmc_table.columns))
+            self.mainTableWidget.setRowCount(lfmc_table.shape[0])
+            column_header = ("Идентификатор", "Фамилия", "Имя", "Отчество", "Дата рождения", "Категория годности",
+                                 "Военная специальность", "Боевой опыт")
+            self.mainTableWidget.setHorizontalHeaderLabels(column_header)
+            self.mainTableWidget.verticalHeader().setVisible(False)
+            self.mainTableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+            self.is_loaded = True
+            self.act_update()
+        else:
+            self.show_error('База данных уже загружена, используйте "Обновить базу"')
 
     def act_update(self):
         if self.is_loaded:
-            lfmc_table = pd.read_excel('bases/lfmc.xlsx')
+            lfmc_table = pd.read_excel('bases/lfmc.xlsx', usecols=['Lfmc_id', 'Surname', 'Name', 'Patronymic',
+                                                                   'Birthday_date', 'Health_category',
+                                                                   'Military_speciality', 'Combat_experience'])
             self.mainTableWidget.setColumnCount(len(lfmc_table.columns))
             self.mainTableWidget.setRowCount(lfmc_table.shape[0])
             for row in range(0, lfmc_table.shape[0]):
@@ -231,7 +247,6 @@ class UI(QMainWindow):
                     break
             if i == logins_data.shape[0]-1:
                 self.show_error("Неверный логин или пароль")
-    #             test commit
 
     def show_error(self, message):
         QMessageBox().critical(self, 'Ошибка', message, QMessageBox.Ok)

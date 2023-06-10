@@ -95,7 +95,7 @@
     <property name="title">
      <string>Администрирование</string>
     </property>
-    <addaction name="add_mil"/>
+    <addaction name="add_flmc"/>
     <addaction name="change_mil"/>
     <addaction name="view_report"/>
    </widget>
@@ -123,7 +123,7 @@
     <string>О программе</string>
    </property>
   </action>
-  <action name="add_mil">
+  <action name="add_flmc">
    <property name="text">
     <string>Добавить военнообязанного</string>
    </property>

@@ -111,6 +111,9 @@
     <property name="text">
      <string>root</string>
     </property>
+    <property name="echoMode">
+     <enum>QLineEdit::Password</enum>
+    </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
     </property>
