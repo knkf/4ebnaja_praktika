@@ -231,6 +231,7 @@ class UI(QMainWindow):
                     break
             if i == logins_data.shape[0]-1:
                 self.show_error("Неверный логин или пароль")
+    #             test commit
 
     def show_error(self, message):
         QMessageBox().critical(self, 'Ошибка', message, QMessageBox.Ok)
