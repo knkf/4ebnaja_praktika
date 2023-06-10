@@ -149,6 +149,7 @@ class MainTable(QMainWindow):
         self.aboutProgram = AboutProgram()
         self.help = Help()
         self.report = PersonalFile(self.selected_id)
+        self.is_loaded = False
 
     def act_report(self):
         if self.mainTableWidget.rowCount() != 0:
@@ -174,20 +175,23 @@ class MainTable(QMainWindow):
         self.mainTableWidget.setHorizontalHeaderLabels(column_header)
         self.mainTableWidget.verticalHeader().setVisible(False)
         self.mainTableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.is_loaded = True
         self.act_update()
 
     def act_update(self):
-        lfmc_table = pd.read_excel('bases/lfmc.xlsx')
-        self.mainTableWidget.setColumnCount(len(lfmc_table.columns))
-        self.mainTableWidget.setRowCount(lfmc_table.shape[0])
-        for row in range(0, lfmc_table.shape[0]):
-            column = 0
-            for col_name, data in lfmc_table.items():
-                item = QTableWidgetItem(str(data[row]))
-                item.setTextAlignment(QtCore.Qt.AlignCenter)
-                self.mainTableWidget.setItem(row, column, item)
-                column += 1
-
+        if self.is_loaded:
+            lfmc_table = pd.read_excel('bases/lfmc.xlsx')
+            self.mainTableWidget.setColumnCount(len(lfmc_table.columns))
+            self.mainTableWidget.setRowCount(lfmc_table.shape[0])
+            for row in range(0, lfmc_table.shape[0]):
+                column = 0
+                for col_name, data in lfmc_table.items():
+                    item = QTableWidgetItem(str(data[row]))
+                    item.setTextAlignment(QtCore.Qt.AlignCenter)
+                    self.mainTableWidget.setItem(row, column, item)
+                    column += 1
+        else:
+            self.show_error('База данных не загружена')
     def cell_clicked(self):
         self.selected_id = self.mainTableWidget.model().index(self.mainTableWidget.currentRow(), 0).data()
         self.report = PersonalFile(self.selected_id)
@@ -217,17 +221,16 @@ class UI(QMainWindow):
         login = self.loginForm_login.text()
         password = self.loginForm_password.text()
         for i in range(0, logins_data.shape[0]):
-            if logins_data.iloc[i][0] != login:
-                continue
-            else:
+            if logins_data.iloc[i][0] == login:
                 if passwords_data.iloc[i][0] == password:
                     self.mainTable.show()
                     self.close()
                     break
                 else:
-                    self.show_error("Неверный пароль")
-        else:
-            self.show_error("Неверный логин")
+                    self.show_error("Неверный логин или пароль")
+                    break
+            if i == logins_data.shape[0]-1:
+                self.show_error("Неверный логин или пароль")
 
     def show_error(self, message):
         QMessageBox().critical(self, 'Ошибка', message, QMessageBox.Ok)
