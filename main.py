@@ -1,7 +1,7 @@
 import openpyxl
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QLineEdit, QMessageBox, QMenuBar, QMenu, QAction, \
-    QTableWidget, QHeaderView, QTableWidgetItem, QLabel
+    QTableWidget, QHeaderView, QTableWidgetItem, QLabel, QRadioButton
 from PyQt5 import uic, QtCore
 import sys
 import pandas as pd
@@ -114,6 +114,90 @@ class PersonalFile(QMainWindow):
         return data_row
 
 
+class AddChangeFLMC(QMainWindow):
+    def __init__(self, incoming_id):
+        super(AddChangeFLMC, self).__init__()
+        self.incoming_id = incoming_id
+        uic.loadUi('addChangeFlmc.ui', self)
+
+        self.lfmc_surname = self.findChild(QLineEdit, 'flmc_surname')
+        self.lfmc_name = self.findChild(QLineEdit, 'flmc_name')
+        self.lfmc_patronymic = self.findChild(QLineEdit, 'flmc_patronymic')
+        self.lfmc_birthday_date = self.findChild(QLineEdit, 'flmc_birthday_date')
+        self.lfmc_health_category = self.findChild(QLineEdit, 'flmc_health_category')
+        self.lfmc_military_speciality = self.findChild(QLineEdit, 'flmc_military_speciality')
+        self.lfmc_combat_experience = self.findChild(QLineEdit, 'flmc_combat_experience')
+
+        self.button_add_change = self.findChild(QPushButton, 'button_add_change')
+        self.rb_add = self.findChild(QRadioButton, 'rb_add')
+        self.rb_change = self.findChild(QRadioButton, 'rb_change')
+        self.flmc_id = self.findChild(QLabel, 'flmc_id')
+
+        self.rb_add.setDisabled(True)
+        self.rb_change.setDisabled(True)
+
+        if self.incoming_id == '—':
+            self.button_add_change.clicked.connect(self.add_flmc)
+            self.button_add_change.setText('Добавление военнообязанного')
+            self.rb_add.setChecked(True)
+        else:
+            self.button_add_change.clicked.connect(self.change_flmc)
+            self.button_add_change.setText('Изменить')
+            self.setWindowTitle('Изменение данных военнообязанного')
+            self.rb_change.setChecked(True)
+        self.flmc_id.setText('ID: ' + self.incoming_id)
+
+    def add_flmc(self):
+        lfmc_table = pd.read_excel('bases/lfmc.xlsx')
+        lfmc_id = lfmc_table.shape[0] + 1
+        lfmc_surname = self.lfmc_surname.text()
+        lfmc_name = self.lfmc_name.text()
+        lfmc_patronymic = self.lfmc_patronymic.text()
+        lfmc_birthday_date = self.lfmc_birthday_date.text()
+        lfmc_health_category = self.lfmc_health_category.text()
+        lfmc_military_speciality = self.lfmc_military_speciality.text()
+        lfmc_combat_experience = self.lfmc_combat_experience.text()
+        lfmc_params = [lfmc_id, lfmc_surname, lfmc_name,
+                       lfmc_patronymic, lfmc_birthday_date, lfmc_health_category,
+                       lfmc_military_speciality, lfmc_combat_experience]
+        no_empty_lines = False
+        for option in lfmc_params:
+            if option == '':
+                self.show_error('Не все поля заполнены')
+                no_empty_lines = False
+                break
+            else:
+                no_empty_lines = True
+                continue
+
+        if no_empty_lines:
+            lfmc_dict = {'Lfmc_id': lfmc_id,
+                         'Surname': lfmc_surname,
+                         'Name': lfmc_name,
+                         'Patronymic': lfmc_patronymic,
+                         'Birthday_date': lfmc_birthday_date,
+                         'Health_category': lfmc_health_category,
+                         'Military_speciality': lfmc_military_speciality,
+                         'Combat_experience': lfmc_combat_experience}
+            lfmc_table = pd.concat([lfmc_table, pd.DataFrame([lfmc_dict])], ignore_index=True)
+            lfmc_table.to_excel('bases/lfmc.xlsx', index=False)
+            self.show_message('Военнообязанный добавлен, его идентификатор: ' + str(lfmc_id))
+
+    def change_flmc(self):
+        pass
+
+    def show_error(self, message):
+        QMessageBox().critical(self, 'Ошибка', message, QMessageBox.Ok)
+
+    def show_message(self, message):
+        mesage_box = QMessageBox()
+        mesage_box.setIcon(QMessageBox.Information)
+        mesage_box.setText(message)
+        mesage_box.setWindowTitle('Уведомление')
+        mesage_box.setStandardButtons(QMessageBox.Ok)
+        mesage_box.exec()
+
+
 class AboutProgram(QMainWindow):
     def __init__(self):
         super(AboutProgram, self).__init__()
@@ -137,34 +221,40 @@ class MainTable(QMainWindow):
         self.action_load = self.findChild(QAction, 'load_base')
         self.action_update = self.findChild(QAction, 'update_base')
         self.action_report = self.findChild(QAction, 'view_report')
-        self.action_add_flmc = self.findChild(QAction, 'add_flmc')
+        self.action_add_change_flmc = self.findChild(QAction, 'add_change_flmc')
         self.lfmc_id = self.findChild(QLabel, 'lfmc_id')
+        self.reset_selection = self.findChild(QPushButton, 'reset_selection')
 
         self.action_help.triggered.connect(self.act_help)
         self.action_about_program.triggered.connect(self.act_about_program)
         self.action_load.triggered.connect(self.act_load)
         self.action_update.triggered.connect(self.act_update)
         self.action_report.triggered.connect(self.act_report)
-        self.action_add_flmc.triggered.connect(self.act_add_flmc)
+        self.action_add_change_flmc.triggered.connect(self.act_add_flmc)
         self.mainTableWidget.itemSelectionChanged.connect(self.cell_clicked)
+        self.reset_selection.clicked.connect(self.reset)
 
-        self.selected_id = '-'
+        self.selected_id = '—'
         self.aboutProgram = AboutProgram()
         self.help = Help()
         self.report = PersonalFile(self.selected_id)
+        self.add_change = AddChangeFLMC(self.selected_id)
         self.is_loaded = False
 
+    def reset(self):
+        self.selected_id = '—'
+        self.lfmc_id.setText('Выделен военнообязанный с идентификатором: ' + self.selected_id)
+
     def act_add_flmc(self):
-        lfmc_table = pd.read_excel('bases/lfmc.xlsx')
-        lfmc_dict = {'Lfmc_id': 'default', 'Surname': 'default', 'Name': 'default', 'Patronymic': 'default',
-                           'Birthday_date': 'default', 'Health_category': 'default', 'Military_speciality': 'default',
-                           'Combat_experience': 'default'}
-        lfmc_table = pd.concat([lfmc_table, pd.DataFrame([lfmc_dict])], ignore_index=True)
-        lfmc_table.to_excel('bases/lfmc.xlsx', index=False)
+        if self.is_loaded:
+            self.add_change = AddChangeFLMC(self.selected_id)
+            self.add_change.show()
+        else:
+            self.show_error('База данных не загружена')
 
     def act_report(self):
         if self.mainTableWidget.rowCount() != 0:
-            if self.selected_id != '-':
+            if self.selected_id != '—':
                 self.report.show()
             else:
                 self.show_error('Военнообязанный не выбран')
@@ -183,7 +273,7 @@ class MainTable(QMainWindow):
             self.mainTableWidget.setColumnCount(len(lfmc_table.columns))
             self.mainTableWidget.setRowCount(lfmc_table.shape[0])
             column_header = ("Идентификатор", "Фамилия", "Имя", "Отчество", "Дата рождения", "Категория годности",
-                                 "Военная специальность", "Боевой опыт")
+                             "Военная специальность", "Боевой опыт")
             self.mainTableWidget.setHorizontalHeaderLabels(column_header)
             self.mainTableWidget.verticalHeader().setVisible(False)
             self.mainTableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -208,6 +298,7 @@ class MainTable(QMainWindow):
                     column += 1
         else:
             self.show_error('База данных не загружена')
+
     def cell_clicked(self):
         self.selected_id = self.mainTableWidget.model().index(self.mainTableWidget.currentRow(), 0).data()
         self.report = PersonalFile(self.selected_id)
@@ -245,7 +336,7 @@ class UI(QMainWindow):
                 else:
                     self.show_error("Неверный логин или пароль")
                     break
-            if i == logins_data.shape[0]-1:
+            if i == logins_data.shape[0] - 1:
                 self.show_error("Неверный логин или пароль")
 
     def show_error(self, message):
@@ -256,4 +347,3 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     UIWindow = UI()
     app.exec_()
-

@@ -57,7 +57,7 @@
    <widget class="QLabel" name="lfmc_id">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>80</x>
       <y>740</y>
       <width>291</width>
       <height>16</height>
@@ -65,6 +65,19 @@
     </property>
     <property name="text">
      <string>Выделен военнообязанный с идентификатором: —</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="reset_selection">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>732</y>
+      <width>75</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Сбросить</string>
     </property>
    </widget>
   </widget>
@@ -95,8 +108,7 @@
     <property name="title">
      <string>Администрирование</string>
     </property>
-    <addaction name="add_flmc"/>
-    <addaction name="change_mil"/>
+    <addaction name="add_change_flmc"/>
     <addaction name="view_report"/>
    </widget>
    <addaction name="menu"/>
@@ -123,9 +135,9 @@
     <string>О программе</string>
    </property>
   </action>
-  <action name="add_flmc">
+  <action name="add_change_flmc">
    <property name="text">
-    <string>Добавить военнообязанного</string>
+    <string>Добавить/изменить данные военнообязанного</string>
    </property>
   </action>
   <action name="delete_mil">
