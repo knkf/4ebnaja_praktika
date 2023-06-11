@@ -53,6 +53,9 @@
       <height>731</height>
      </size>
     </property>
+    <property name="editTriggers">
+     <set>QAbstractItemView::NoEditTriggers</set>
+    </property>
    </widget>
    <widget class="QLabel" name="lfmc_id">
     <property name="geometry">
@@ -83,14 +86,23 @@
    <widget class="QLabel" name="prompt">
     <property name="geometry">
      <rect>
-      <x>880</x>
+      <x>770</x>
       <y>740</y>
-      <width>321</width>
+      <width>431</width>
       <height>16</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 0, 0)</string>
+    </property>
     <property name="text">
-     <string>После добавления военнообязанного обновите базу данных</string>
+     <string>После добавления/изменения военнообязанного обновите базу данных</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

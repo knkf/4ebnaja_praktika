@@ -7,8 +7,20 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>510</height>
+    <height>545</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>545</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>800</width>
+    <height>545</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Помощь</string>
@@ -20,7 +32,7 @@
       <x>10</x>
       <y>10</y>
       <width>781</width>
-      <height>211</height>
+      <height>251</height>
      </rect>
     </property>
     <property name="font">
@@ -31,7 +43,8 @@
     <property name="text">
      <string>Для запуска проекта необходимо открыть файл main.py. 
 Запуск должен производиться после того как проект открыт в среде PyCharm. 
-Необходим Python 3.11 или свежее. 
+Необходим Python 3.11 или свежее.
+ВАЖНО: Используйте масштаб изображения на экране в 100%, использование другого масштаба может привести к некорректной работе программы.
 Используемые библиотеки: 
 PyQt5 5.15.9
 pandas 2.0.2
@@ -41,12 +54,15 @@ pip install pyqt5
 pip install pandas
 pip install openpyxl</string>
     </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>230</y>
+      <y>270</y>
       <width>781</width>
       <height>101</height>
      </rect>
@@ -68,7 +84,7 @@ pip install openpyxl</string>
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>340</y>
+      <y>380</y>
       <width>781</width>
       <height>161</height>
      </rect>

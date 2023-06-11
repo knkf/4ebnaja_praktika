@@ -138,7 +138,8 @@ class AddChangeFLMC(QMainWindow):
         self.flmc_id.setText('ID: ' + self.id)
         if self.id == '—':
             self.button_add_change.clicked.connect(self.add_flmc)
-            self.button_add_change.setText('Добавление военнообязанного')
+            self.button_add_change.setText('Добавить')
+            self.setWindowTitle('Добавление данных военнообязанного')
             self.rb_add.setChecked(True)
         else:
             self.button_add_change.clicked.connect(self.change_flmc)
@@ -191,7 +192,41 @@ class AddChangeFLMC(QMainWindow):
             self.show_message('Военнообязанный добавлен, его идентификатор: ' + str(lfmc_id))
 
     def change_flmc(self):
-        pass
+        lfmc_table = pd.read_excel('bases/lfmc.xlsx')
+        lfmc_id = self.id
+        lfmc_surname = self.lfmc_surname.text()
+        lfmc_name = self.lfmc_name.text()
+        lfmc_patronymic = self.lfmc_patronymic.text()
+        lfmc_birthday_date = self.lfmc_birthday_date.text()
+        lfmc_health_category = self.lfmc_health_category.text()
+        lfmc_military_speciality = self.lfmc_military_speciality.text()
+        lfmc_combat_experience = self.lfmc_combat_experience.text()
+        lfmc_params = [lfmc_id, lfmc_surname, lfmc_name,
+                       lfmc_patronymic, lfmc_birthday_date, lfmc_health_category,
+                       lfmc_military_speciality, lfmc_combat_experience]
+        no_empty_lines = False
+        for option in lfmc_params:
+            if option == '':
+                self.show_error('Не все поля заполнены')
+                no_empty_lines = False
+                break
+            else:
+                no_empty_lines = True
+                continue
+
+        if no_empty_lines:
+            lfmc_dict = {'Lfmc_id': lfmc_id,
+                         'Surname': lfmc_surname,
+                         'Name': lfmc_name,
+                         'Patronymic': lfmc_patronymic,
+                         'Birthday_date': lfmc_birthday_date,
+                         'Health_category': lfmc_health_category,
+                         'Military_speciality': lfmc_military_speciality,
+                         'Combat_experience': lfmc_combat_experience}
+            lfmc_table.iloc[int(lfmc_id) - 1] = lfmc_dict
+            lfmc_table.to_excel('bases/lfmc.xlsx', index=False)
+            self.show_message('Данные военнообязанного с ID: ' + str(lfmc_id) + ' изменены')
+            self.close()
 
     def get_row(self, file_name):
         data_frame = pd.read_excel('bases/' + file_name)
