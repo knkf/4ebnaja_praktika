@@ -1,37 +1,190 @@
 import openpyxl
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QLineEdit, QMessageBox, QMenuBar, QMenu, QAction, \
-    QTableWidget, QHeaderView, QTableWidgetItem, QLabel, QRadioButton
+    QTableWidget, QHeaderView, QTableWidgetItem, QLabel, QRadioButton, QTextEdit
 from PyQt5 import uic, QtCore
 import sys
 import pandas as pd
 
 
 class PersonalData(QMainWindow):
-    def __init__(self, incoming_id):
+    def __init__(self, incoming_id, is_full):
         super(PersonalData, self).__init__()
         self.id = incoming_id
+        self.is_full = is_full
         uic.loadUi('personalData.ui', self)
+
+        self.passport_series = self.findChild(QLineEdit, 'passport_series')
+        self.passport_id = self.findChild(QLineEdit, 'passport_id')
+        self.birthday_place = self.findChild(QLineEdit, 'birthday_place')
+        self.living_place = self.findChild(QLineEdit, 'living_place')
+        self.family_status = self.findChild(QLineEdit, 'family_status')
+        self.education = self.findChild(QLineEdit, 'education')
+        self.work_place = self.findChild(QLineEdit, 'work_place')
+        self.reference_from_work = self.findChild(QTextEdit, 'reference_from_work')
+        self.phone_number = self.findChild(QLineEdit, 'phone_number')
+        self.recruiting_commitee_decision = self.findChild(QTextEdit, 'recruiting_commitee_decision')
+
+        self.button_add_change = self.findChild(QPushButton, 'button_add_change')
+        self.rb_add = self.findChild(QRadioButton, 'rb_add')
+        self.rb_change = self.findChild(QRadioButton, 'rb_change')
+        self.flmc_id = self.findChild(QLabel, 'flmc_id')
+
+        self.rb_add.setDisabled(True)
+        self.rb_change.setDisabled(True)
+        self.flmc_id.setText('ID: ' + self.id)
+
+        if not self.is_full:
+            self.button_add_change.clicked.connect(self.add_personal_data)
+            self.button_add_change.setText('Добавить')
+            self.setWindowTitle('Добавление основных данных военнообязанного')
+            self.rb_add.setChecked(True)
+        else:
+            self.button_add_change.clicked.connect(self.change_personal_data)
+            self.button_add_change.setText('Изменить')
+            self.setWindowTitle('Изменение основных данных военнообязанного')
+            self.rb_change.setChecked(True)
+            data_row = self.get_row('personal_file.xlsx')
+            self.passport_series.setText(str(data_row[1]))
+            self.passport_id.setText(str(data_row[2]))
+            self.birthday_place.setText(str(data_row[3]))
+            self.living_place.setText(str(data_row[4]))
+            self.family_status.setText(str(data_row[5]))
+            self.education.setText(str(data_row[6]))
+            self.work_place.setText(str(data_row[7]))
+            self.reference_from_work.setText(str(data_row[8]))
+            self.phone_number.setText(str(data_row[9]))
+            self.recruiting_commitee_decision.setText(str(data_row[10]))
+
+    def add_personal_data(self):
+        table = pd.read_excel('bases/personal_file.xlsx')
+        lfmc_id = self.id
+        passport_series = self.passport_series.text()
+        passport_id = self.passport_id.text()
+        birthday_place = self.birthday_place.text()
+        living_place = self.living_place.text()
+        family_status = self.family_status.text()
+        education = self.education.text()
+        work_place = self.work_place.text()
+        reference_from_work = self.reference_from_work.toPlainText()
+        phone_number = self.phone_number.text()
+        recruiting_commitee_decision = self.recruiting_commitee_decision.toPlainText()
+        params = [lfmc_id, passport_series, passport_id,
+                  birthday_place, living_place, family_status,
+                  education, work_place, reference_from_work,
+                  phone_number, recruiting_commitee_decision]
+        no_empty_lines = False
+        for option in params:
+            if option == '':
+                self.show_error('Не все поля заполнены.')
+                no_empty_lines = False
+                break
+            else:
+                no_empty_lines = True
+                continue
+
+        if no_empty_lines:
+            dict = {'Lfmc_id': lfmc_id,
+                    'Passport_series': passport_series,
+                    'Passport_id': passport_id,
+                    'Birthday_place': birthday_place,
+                    'Living_place': living_place,
+                    'Family_status': family_status,
+                    'Education': education,
+                    'Work_place': work_place,
+                    'Reference_from_work': reference_from_work,
+                    'Phone_number': phone_number,
+                    'Recruiting_commitee_decision': recruiting_commitee_decision}
+            table = pd.concat([table, pd.DataFrame([dict])], ignore_index=True)
+            table.to_excel('bases/personal_file.xlsx', index=False)
+            self.show_message('Основные данные военнообязанного с идентификатором: ' + str(lfmc_id) + ' добавлены.')
+
+    def change_personal_data(self):
+        table = pd.read_excel('bases/personal_file.xlsx')
+        lfmc_id = self.id
+        passport_series = self.passport_series.text()
+        passport_id = self.passport_id.text()
+        birthday_place = self.birthday_place.text()
+        living_place = self.living_place.text()
+        family_status = self.family_status.text()
+        education = self.education.text()
+        work_place = self.work_place.text()
+        reference_from_work = self.reference_from_work.toPlainText()
+        phone_number = self.phone_number.text()
+        recruiting_commitee_decision = self.recruiting_commitee_decision.toPlainText()
+        params = [lfmc_id, passport_series, passport_id,
+                  birthday_place, living_place, family_status,
+                  education, work_place, reference_from_work,
+                  phone_number, recruiting_commitee_decision]
+        no_empty_lines = False
+        for option in params:
+            if option == '':
+                self.show_error('Не все поля заполнены.')
+                no_empty_lines = False
+                break
+            else:
+                no_empty_lines = True
+                continue
+
+        if no_empty_lines:
+            dict = {'Lfmc_id': lfmc_id,
+                    'Passport_series': passport_series,
+                    'Passport_id': passport_id,
+                    'Birthday_place': birthday_place,
+                    'Living_place': living_place,
+                    'Family_status': family_status,
+                    'Education': education,
+                    'Work_place': work_place,
+                    'Reference_from_work': reference_from_work,
+                    'Phone_number': phone_number,
+                    'Recruiting_commitee_decision': recruiting_commitee_decision}
+            table.iloc[int(lfmc_id) - 1] = dict
+            table.to_excel('bases/personal_file.xlsx', index=False)
+            self.show_message('Данные военнообязанного с ID: ' + str(lfmc_id) + ' изменены.')
+            self.close()
+
+    def get_row(self, file_name):
+        data_frame = pd.read_excel('bases/' + file_name)
+
+        data_row = ''
+        for row in range(0, data_frame.shape[0]):
+            if str(data_frame.iloc[row][0]) == str(self.id):
+                data_row = data_frame.iloc[row]
+        return data_row
+
+    def show_error(self, message):
+        QMessageBox().critical(self, 'Ошибка', message, QMessageBox.Ok)
+
+    def show_message(self, message):
+        message_box = QMessageBox()
+        message_box.setIcon(QMessageBox.Information)
+        message_box.setText(message)
+        message_box.setWindowTitle('Уведомление')
+        message_box.setStandardButtons(QMessageBox.Ok)
+        message_box.exec()
 
 
 class ParentsInfo(QMainWindow):
-    def __init__(self, incoming_id):
+    def __init__(self, incoming_id, is_empty):
         super(ParentsInfo, self).__init__()
         self.id = incoming_id
+        self.is_empty = is_empty
         uic.loadUi('parentsInfo.ui', self)
 
 
 class MedicalDocument(QMainWindow):
-    def __init__(self, incoming_id):
+    def __init__(self, incoming_id, is_empty):
         super(MedicalDocument, self).__init__()
         self.id = incoming_id
+        self.is_empty = is_empty
         uic.loadUi('medicalDocument.ui', self)
 
 
 class ArmyOrder(QMainWindow):
-    def __init__(self, incoming_id):
+    def __init__(self, incoming_id, is_empty):
         super(ArmyOrder, self).__init__()
         self.id = incoming_id
+        self.is_empty = is_empty
         uic.loadUi('armyOrder.ui', self)
 
 
@@ -96,10 +249,10 @@ class PersonalFile(QMainWindow):
         self.examination_results = self.findChild(QLabel, 'examination_results')
         self.diagnosis = self.findChild(QLabel, 'diagnosis')
 
-        self.pers_data = PersonalData(self.id)
-        self.parents_info = ParentsInfo(self.id)
-        self.med_doc = MedicalDocument(self.id)
-        self.arm_order = ArmyOrder(self.id)
+        self.pers_data = PersonalData(self.id, False)
+        self.parents_info = ParentsInfo(self.id, False)
+        self.med_doc = MedicalDocument(self.id, False)
+        self.arm_order = ArmyOrder(self.id, False)
 
     def view_info(self):
         lfmc_row = self.get_row('lfmc.xlsx')
@@ -123,8 +276,10 @@ class PersonalFile(QMainWindow):
             self.reference_from_work.setText('Характеристика с работы: ' + str(personal_file_row[8]))
             self.phone_number.setText('Номер телефона: ' + str(personal_file_row[9]))
             self.commitee_decision.setText('Решение комиссии: ' + str(personal_file_row[10]))
+            self.pers_data = PersonalData(self.id, True)
         else:
             is_full = False
+            self.pers_data = PersonalData(self.id, False)
 
         if self.is_flms_data_exist('parents_info.xlsx'):
             parents_info_row = self.get_row('parents_info.xlsx')
@@ -138,6 +293,7 @@ class PersonalFile(QMainWindow):
             self.mother_work_place.setText('Место работы: ' + str(parents_info_row[8]))
         else:
             is_full = False
+            # self.pers_data = PersonalData(self.id, True)
 
         if self.is_flms_data_exist('army_order.xlsx'):
             army_order_row = self.get_row('army_order.xlsx')
@@ -146,6 +302,7 @@ class PersonalFile(QMainWindow):
             self.visit_reason.setText('Причина посещения: ' + str(army_order_row[3]))
         else:
             is_full = False
+            # self.pers_data = PersonalData(self.id, True)
 
         if self.is_flms_data_exist('medical_documents.xlsx'):
             medical_documents_row = self.get_row('medical_documents.xlsx')
@@ -160,6 +317,7 @@ class PersonalFile(QMainWindow):
             self.diagnosis.setText('Диагноз: ' + str(medical_documents_row[7]))
         else:
             is_full = False
+            # self.pers_data = PersonalData(self.id, True)
 
         if not is_full:
             self.show_message('Для данного военнообязанного найдены не все данные, дополните личное дело.')
@@ -234,13 +392,13 @@ class AddChangeFLMC(QMainWindow):
             self.setWindowTitle('Изменение данных военнообязанного')
             self.rb_change.setChecked(True)
             flmc_row = self.get_row('lfmc.xlsx')
-            self.lfmc_surname.setText(flmc_row[1])
-            self.lfmc_name.setText(flmc_row[2])
-            self.lfmc_patronymic.setText(flmc_row[3])
-            self.lfmc_birthday_date.setText(flmc_row[4])
-            self.lfmc_health_category.setText(flmc_row[5])
-            self.lfmc_military_speciality.setText(flmc_row[6])
-            self.lfmc_combat_experience.setText(flmc_row[7])
+            self.lfmc_surname.setText(str(flmc_row[1]))
+            self.lfmc_name.setText(str(flmc_row[2]))
+            self.lfmc_patronymic.setText(str(flmc_row[3]))
+            self.lfmc_birthday_date.setText(str(flmc_row[4]))
+            self.lfmc_health_category.setText(str(flmc_row[5]))
+            self.lfmc_military_speciality.setText(str(flmc_row[6]))
+            self.lfmc_combat_experience.setText(str(flmc_row[7]))
 
     def add_flmc(self):
         lfmc_table = pd.read_excel('bases/lfmc.xlsx')

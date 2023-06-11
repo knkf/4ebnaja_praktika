@@ -247,7 +247,7 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="passport_ID">
+   <widget class="QLineEdit" name="passport_id">
     <property name="geometry">
      <rect>
       <x>140</x>
