@@ -7,6 +7,34 @@ import sys
 import pandas as pd
 
 
+class PersonalData(QMainWindow):
+    def __init__(self, incoming_id):
+        super(PersonalData, self).__init__()
+        self.id = incoming_id
+        uic.loadUi('personalData.ui', self)
+
+
+class ParentsInfo(QMainWindow):
+    def __init__(self, incoming_id):
+        super(ParentsInfo, self).__init__()
+        self.id = incoming_id
+        uic.loadUi('parentsInfo.ui', self)
+
+
+class MedicalDocument(QMainWindow):
+    def __init__(self, incoming_id):
+        super(MedicalDocument, self).__init__()
+        self.id = incoming_id
+        uic.loadUi('medicalDocument.ui', self)
+
+
+class ArmyOrder(QMainWindow):
+    def __init__(self, incoming_id):
+        super(ArmyOrder, self).__init__()
+        self.id = incoming_id
+        uic.loadUi('armyOrder.ui', self)
+
+
 class PersonalFile(QMainWindow):
     def __init__(self, incoming_id):
         super(PersonalFile, self).__init__()
@@ -17,7 +45,16 @@ class PersonalFile(QMainWindow):
         self.flmc_id.setText('ID: ' + self.id)
 
         self.act_create = self.findChild(QAction, 'create_personal_file')
+        self.act_add_change_personal_file = self.findChild(QAction, 'add_change_personal_file')
+        self.act_add_change_parents_info = self.findChild(QAction, 'add_change_parents_info')
+        self.act_add_change_medical_document = self.findChild(QAction, 'add_change_medical_document')
+        self.act_add_change_army_order = self.findChild(QAction, 'add_change_army_order')
+
         self.act_create.triggered.connect(self.view_info)
+        self.act_add_change_personal_file.triggered.connect(self.addch_personal_file)
+        self.act_add_change_parents_info.triggered.connect(self.addch_parents_info)
+        self.act_add_change_medical_document.triggered.connect(self.addch_medical_document)
+        self.act_add_change_army_order.triggered.connect(self.addch_army_order)
 
         self.full_name = self.findChild(QLabel, 'full_name')
         self.birthday_date = self.findChild(QLabel, 'birthday_date')
@@ -59,6 +96,11 @@ class PersonalFile(QMainWindow):
         self.examination_results = self.findChild(QLabel, 'examination_results')
         self.diagnosis = self.findChild(QLabel, 'diagnosis')
 
+        self.pers_data = PersonalData(self.id)
+        self.parents_info = ParentsInfo(self.id)
+        self.med_doc = MedicalDocument(self.id)
+        self.arm_order = ArmyOrder(self.id)
+
     def view_info(self):
         lfmc_row = self.get_row('lfmc.xlsx')
         self.full_name.setText(lfmc_row[1] + ' ' + lfmc_row[2] + ' ' + lfmc_row[3])
@@ -67,43 +109,60 @@ class PersonalFile(QMainWindow):
         self.military_specialty.setText('Военная специальность: ' + lfmc_row[6])
         self.combat_experience.setText('Военный опыт: ' + lfmc_row[7])
 
-        personal_file_row = self.get_row('personal_file.xlsx')
-        self.passport_series.setText('Серия: ' + str(personal_file_row[1]))
-        self.passport_id.setText('Номер: ' + str(personal_file_row[2]))
-        self.birthday_place.setText('Место рождения: ' + str(personal_file_row[3]))
-        self.living_place.setText('Место проживания: ' + str(personal_file_row[4]))
-        self.family_status.setText('Семейное положение: ' + str(personal_file_row[5]))
-        self.education.setText('Образование: ' + str(personal_file_row[6]))
-        self.work_place.setText('Место работы: ' + str(personal_file_row[7]))
-        self.reference_from_work.setText('Характеристика с работы: ' + str(personal_file_row[8]))
-        self.phone_number.setText('Номер телефона: ' + str(personal_file_row[9]))
-        self.commitee_decision.setText('Решение комиссии: ' + str(personal_file_row[10]))
+        is_full = True
 
-        parents_info_row = self.get_row('parents_info.xlsx')
-        self.father_full_name.setText(str(parents_info_row[1]))
-        self.father_birthday_date.setText('Дата рождения: ' + str(parents_info_row[2])[0:10])
-        self.father_birthday_place.setText('Место рождения: ' + str(parents_info_row[3]))
-        self.father_work_place.setText('Место работы: ' + str(parents_info_row[4]))
-        self.mother_full_name.setText(str(parents_info_row[5]))
-        self.mother_birthday_date.setText('Дата рождения: ' + str(parents_info_row[6])[0:10])
-        self.mother_birthday_place.setText('Место рождения: ' + str(parents_info_row[7]))
-        self.mother_work_place.setText('Место работы: ' + str(parents_info_row[8]))
+        if self.is_flms_data_exist('personal_file.xlsx'):
+            personal_file_row = self.get_row('personal_file.xlsx')
+            self.passport_series.setText('Серия: ' + str(personal_file_row[1]))
+            self.passport_id.setText('Номер: ' + str(personal_file_row[2]))
+            self.birthday_place.setText('Место рождения: ' + str(personal_file_row[3]))
+            self.living_place.setText('Место проживания: ' + str(personal_file_row[4]))
+            self.family_status.setText('Семейное положение: ' + str(personal_file_row[5]))
+            self.education.setText('Образование: ' + str(personal_file_row[6]))
+            self.work_place.setText('Место работы: ' + str(personal_file_row[7]))
+            self.reference_from_work.setText('Характеристика с работы: ' + str(personal_file_row[8]))
+            self.phone_number.setText('Номер телефона: ' + str(personal_file_row[9]))
+            self.commitee_decision.setText('Решение комиссии: ' + str(personal_file_row[10]))
+        else:
+            is_full = False
 
-        army_order_row = self.get_row('army_order.xlsx')
-        self.visit_date.setText('Дата посещения: ' + str(army_order_row[1]))
-        self.comissariat_address.setText('Адрес военкомата: ' + str(army_order_row[2]))
-        self.visit_reason.setText('Причина посещения: ' + str(army_order_row[3]))
+        if self.is_flms_data_exist('parents_info.xlsx'):
+            parents_info_row = self.get_row('parents_info.xlsx')
+            self.father_full_name.setText(str(parents_info_row[1]))
+            self.father_birthday_date.setText('Дата рождения: ' + str(parents_info_row[2])[0:10])
+            self.father_birthday_place.setText('Место рождения: ' + str(parents_info_row[3]))
+            self.father_work_place.setText('Место работы: ' + str(parents_info_row[4]))
+            self.mother_full_name.setText(str(parents_info_row[5]))
+            self.mother_birthday_date.setText('Дата рождения: ' + str(parents_info_row[6])[0:10])
+            self.mother_birthday_place.setText('Место рождения: ' + str(parents_info_row[7]))
+            self.mother_work_place.setText('Место работы: ' + str(parents_info_row[8]))
+        else:
+            is_full = False
 
-        medical_documents_row = self.get_row('medical_documents.xlsx')
-        self.examination_date.setText('Дата проведения осмотра: ' + str(medical_documents_row[1])[0:10])
-        self.examination_place.setText('Место проведения осмотра: ' + str(medical_documents_row[2]))
-        self.doctor_full_name.setText('ФИО врача: ' + str(medical_documents_row[8]))
-        self.doctor_specialty.setText('Специальность врача: ' + str(medical_documents_row[9]))
-        self.complaints.setText('Жалобы: ' + str(medical_documents_row[3]))
-        self.anamnesis.setText('Анамнез: ' + str(medical_documents_row[4]))
-        self.objective_research_data.setText('Данные объективного исследования: ' + str(medical_documents_row[5]))
-        self.examination_results.setText('Результаты осмотра: ' + str(medical_documents_row[6]))
-        self.diagnosis.setText('Диагноз: ' + str(medical_documents_row[7]))
+        if self.is_flms_data_exist('army_order.xlsx'):
+            army_order_row = self.get_row('army_order.xlsx')
+            self.visit_date.setText('Дата посещения: ' + str(army_order_row[1]))
+            self.comissariat_address.setText('Адрес военкомата: ' + str(army_order_row[2]))
+            self.visit_reason.setText('Причина посещения: ' + str(army_order_row[3]))
+        else:
+            is_full = False
+
+        if self.is_flms_data_exist('medical_documents.xlsx'):
+            medical_documents_row = self.get_row('medical_documents.xlsx')
+            self.examination_date.setText('Дата проведения осмотра: ' + str(medical_documents_row[1])[0:10])
+            self.examination_place.setText('Место проведения осмотра: ' + str(medical_documents_row[2]))
+            self.doctor_full_name.setText('ФИО врача: ' + str(medical_documents_row[8]))
+            self.doctor_specialty.setText('Специальность врача: ' + str(medical_documents_row[9]))
+            self.complaints.setText('Жалобы: ' + str(medical_documents_row[3]))
+            self.anamnesis.setText('Анамнез: ' + str(medical_documents_row[4]))
+            self.objective_research_data.setText('Данные объективного исследования: ' + str(medical_documents_row[5]))
+            self.examination_results.setText('Результаты осмотра: ' + str(medical_documents_row[6]))
+            self.diagnosis.setText('Диагноз: ' + str(medical_documents_row[7]))
+        else:
+            is_full = False
+
+        if not is_full:
+            self.show_message('Для данного военнообязанного найдены не все данные, дополните личное дело.')
 
     def get_row(self, file_name):
         data_frame = pd.read_excel('bases/' + file_name)
@@ -112,6 +171,34 @@ class PersonalFile(QMainWindow):
             if str(data_frame.iloc[row][0]) == str(self.id):
                 data_row = data_frame.iloc[row]
         return data_row
+
+    def is_flms_data_exist(self, file_name):
+        data_frame = pd.read_excel('bases/' + file_name)
+        is_exist = False
+        for row in range(0, data_frame.shape[0]):
+            if str(data_frame.iloc[row][0]) == str(self.id):
+                is_exist = True
+        return is_exist
+
+    def show_message(self, message):
+        message_box = QMessageBox()
+        message_box.setIcon(QMessageBox.Information)
+        message_box.setText(message)
+        message_box.setWindowTitle('Уведомление')
+        message_box.setStandardButtons(QMessageBox.Ok)
+        message_box.exec()
+
+    def addch_personal_file(self):
+        self.pers_data.show()
+
+    def addch_parents_info(self):
+        self.parents_info.show()
+
+    def addch_medical_document(self):
+        self.med_doc.show()
+
+    def addch_army_order(self):
+        self.arm_order.show()
 
 
 class AddChangeFLMC(QMainWindow):
@@ -171,7 +258,7 @@ class AddChangeFLMC(QMainWindow):
         no_empty_lines = False
         for option in lfmc_params:
             if option == '':
-                self.show_error('Не все поля заполнены')
+                self.show_error('Не все поля заполнены.')
                 no_empty_lines = False
                 break
             else:
@@ -189,7 +276,7 @@ class AddChangeFLMC(QMainWindow):
                          'Combat_experience': lfmc_combat_experience}
             lfmc_table = pd.concat([lfmc_table, pd.DataFrame([lfmc_dict])], ignore_index=True)
             lfmc_table.to_excel('bases/lfmc.xlsx', index=False)
-            self.show_message('Военнообязанный добавлен, его идентификатор: ' + str(lfmc_id))
+            self.show_message('Военнообязанный добавлен, его идентификатор: ' + str(lfmc_id) + '.')
 
     def change_flmc(self):
         lfmc_table = pd.read_excel('bases/lfmc.xlsx')
@@ -207,7 +294,7 @@ class AddChangeFLMC(QMainWindow):
         no_empty_lines = False
         for option in lfmc_params:
             if option == '':
-                self.show_error('Не все поля заполнены')
+                self.show_error('Не все поля заполнены.')
                 no_empty_lines = False
                 break
             else:
@@ -225,7 +312,7 @@ class AddChangeFLMC(QMainWindow):
                          'Combat_experience': lfmc_combat_experience}
             lfmc_table.iloc[int(lfmc_id) - 1] = lfmc_dict
             lfmc_table.to_excel('bases/lfmc.xlsx', index=False)
-            self.show_message('Данные военнообязанного с ID: ' + str(lfmc_id) + ' изменены')
+            self.show_message('Данные военнообязанного с ID: ' + str(lfmc_id) + ' изменены.')
             self.close()
 
     def get_row(self, file_name):
@@ -303,16 +390,16 @@ class MainTable(QMainWindow):
             self.prompt.show()
             self.add_change.show()
         else:
-            self.show_error('База данных не загружена')
+            self.show_error('База данных не загружена.')
 
     def act_report(self):
         if self.mainTableWidget.rowCount() != 0:
             if self.selected_id != '—':
                 self.report.show()
             else:
-                self.show_error('Военнообязанный не выбран')
+                self.show_error('Военнообязанный не выбран.')
         else:
-            self.show_error('База данных не загружена')
+            self.show_error('База данных не загружена.')
 
     def act_help(self):
         self.help.show()
@@ -333,7 +420,7 @@ class MainTable(QMainWindow):
             self.is_loaded = True
             self.act_update()
         else:
-            self.show_error('База данных уже загружена, используйте "Обновить базу"')
+            self.show_error('База данных уже загружена, используйте "Обновить базу".')
 
     def act_update(self):
         if self.is_loaded:
@@ -351,7 +438,7 @@ class MainTable(QMainWindow):
                     self.mainTableWidget.setItem(row, column, item)
                     column += 1
         else:
-            self.show_error('База данных не загружена')
+            self.show_error('База данных не загружена.')
 
     def cell_clicked(self):
         self.selected_id = self.mainTableWidget.model().index(self.mainTableWidget.currentRow(), 0).data()
@@ -388,10 +475,10 @@ class UI(QMainWindow):
                     self.close()
                     break
                 else:
-                    self.show_error("Неверный логин или пароль")
+                    self.show_error("Неверный логин или пароль.")
                     break
             if i == logins_data.shape[0] - 1:
-                self.show_error("Неверный логин или пароль")
+                self.show_error("Неверный логин или пароль.")
 
     def show_error(self, message):
         QMessageBox().critical(self, 'Ошибка', message, QMessageBox.Ok)

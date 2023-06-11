@@ -1069,7 +1069,10 @@
     <property name="title">
      <string>Редактирование</string>
     </property>
-    <addaction name="actionAction"/>
+    <addaction name="add_change_personal_file"/>
+    <addaction name="add_change_parents_info"/>
+    <addaction name="add_change_medical_document"/>
+    <addaction name="add_change_army_order"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
@@ -1090,9 +1093,24 @@
     <string>Сформировать</string>
    </property>
   </action>
-  <action name="actionAction">
+  <action name="add_change_personal_file">
    <property name="text">
-    <string>Action</string>
+    <string>Добавить/изменить основные данные</string>
+   </property>
+  </action>
+  <action name="add_change_parents_info">
+   <property name="text">
+    <string>Добавить/изменить информацию о членах семьи</string>
+   </property>
+  </action>
+  <action name="add_change_medical_document">
+   <property name="text">
+    <string>Добавить/изменить медицинский документ</string>
+   </property>
+  </action>
+  <action name="add_change_army_order">
+   <property name="text">
+    <string>Добавить/изменить повестку</string>
    </property>
   </action>
  </widget>
