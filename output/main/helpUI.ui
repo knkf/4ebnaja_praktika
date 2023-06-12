@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>HelpWindow</class>
+ <widget class="QMainWindow" name="HelpWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>545</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>545</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>800</width>
+    <height>545</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Помощь</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>781</width>
+      <height>251</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Для запуска проекта необходимо открыть файл main.py. 
+Запуск должен производиться после того как проект открыт в среде PyCharm. 
+Необходим Python 3.11 или свежее.
+ВАЖНО: Используйте масштаб изображения на экране в 100%, использование другого масштаба может привести к некорректной работе программы.
+Используемые библиотеки: 
+PyQt5 5.15.9
+pandas 2.0.2
+openpyxl 3.1.2 
+Команды для установки:
+pip install pyqt5
+pip install pandas
+pip install openpyxl</string>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>270</y>
+      <width>781</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Если команды для установки библиотек не работают, ошибка &quot;Имя не распознано как имя командлета, функции, файла сценария или выполняемой программы&quot;, необходимо сделать следующее:
+Изменить переменную среды PATH, или переустановить Python с установкой галочки в чекбокс &quot;Add Python 3.11 to PATH&quot;. ВАЖНО: Python нужно именно переустанавливать,а не обновлять для новой версии, так как иначе эта галочка не появится.</string>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>380</y>
+      <width>781</width>
+      <height>161</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Если при попытке запуска файла main.py окно сразу же закрывается, необходимо произвести следующие процедуры:
+1) Перейти по пути C:/Users/Имя_пользователя/AppData/Local/Programs/Python/Python311/Lib/site-packages/PyQt5/Qt5/plugins
+Чтобы перейти в папку AppData пользуемся сочетанием клавиш Win+R
+2) Найти в папке plugins папку platforms, скопировать её и переместить в папку с исполняемым файлом python.exe 
+То есть по следующему пути C:Users/Имя_пользователя/AppData/Local/Programs/Python/Python311</string>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
